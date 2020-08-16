@@ -8,3 +8,8 @@ priv_key="${root_folder}/services/lizardfs-base/docker/id_ed25519"
 if [ ! -f "${priv_key}" ]; then
   ssh-keygen -o -a 100 -t ed25519 -f "${priv_key}" -C "${comment}"
 fi
+
+if [ -f "${priv_key}.pub" ]; then
+  echo "Use the generated public key shown bellow for authorizing access to your respostory:"
+  cat "${priv_key}.pub"
+fi
