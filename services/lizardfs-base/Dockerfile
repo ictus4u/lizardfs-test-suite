@@ -1,3 +1,4 @@
+# syntax=docker/dockerfile:experimental
 FROM ubuntu:20.04 as build-stage
 
 USER root
