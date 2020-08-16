@@ -9,4 +9,4 @@ fi
 
 repository=${LIZARD_RELEASE_REPOSITORY:-"ictus4u/lizardfs-dist:latest"}
 
-docker build -t  "${root_folder}/services/lizardfs-base"
+docker build --ssh -t "${root_folder}/services/lizardfs-base"
