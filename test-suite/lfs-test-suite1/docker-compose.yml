@@ -21,7 +21,6 @@ x-master:
   image: lizardfs-master:latest
   build:
     context: ../../services/lizardfs-master
-    dockerfile: ../../services/lizardfs-master/Dockerfile
   expose:
     # metaloggers module
     - "9419"
@@ -39,7 +38,6 @@ x-cgiserv:
   image: lizardfs-cgiserv:latest
   build:
     context: ../../services/lizardfs-cgiserv
-    dockerfile: ../../services/lizardfs-cgiserv/Dockerfile
   expose:
     - "9425"
 
@@ -50,7 +48,6 @@ x-chunkserver:
   image: lizardfs-chunkserver:latest
   build:
     context: ../../services/lizardfs-chunkserver
-    dockerfile: ../../services/lizardfs-chunkserver/Dockerfile
 
 x-metalogger:
   &lfs-metalogger
@@ -59,7 +56,6 @@ x-metalogger:
   image: lizardfs-metalogger:latest
   build:
     context: ../../services/lizardfs-metalogger
-    dockerfile: ../../services/lizardfs-metalogger/Dockerfile
 
 services:
   mfsmaster:
