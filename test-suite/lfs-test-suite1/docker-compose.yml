@@ -1,0 +1,96 @@
+version: "3.7"
+
+x-common:
+  &default-common
+  volumes:
+    - ./volumes/config:/config:ro
+
+x-systemd:
+  &systemd-requirements
+  tmpfs:
+    - /tmp
+    - /run
+    - /run/lock
+  volumes:
+    - /sys/fs/cgroup:/sys/fs/cgroup:ro
+
+x-master:
+  &lfs-master
+  <<: *systemd-requirements
+  <<: *default-common
+  image: lizardfs-master:latest
+  build:
+    context: ../../services/lizardfs-master
+    dockerfile: ../../services/lizardfs-master/Dockerfile
+  expose:
+    # metaloggers module
+    - "9419"
+    # chunkservers module
+    - "9420"
+    # tapeservers module
+    - "9424"
+    # main master server module
+    - "9421"
+
+x-cgiserv:
+  &lfs-cgiserv
+  <<: *systemd-requirements
+  <<: *default-common
+  image: lizardfs-cgiserv:latest
+  build:
+    context: ../../services/lizardfs-cgiserv
+    dockerfile: ../../services/lizardfs-cgiserv/Dockerfile
+  expose:
+    - "9425"
+
+x-chunkserver:
+  &lfs-chunkserver
+  <<: *systemd-requirements
+  <<: *default-common
+  image: lizardfs-chunkserver:latest
+  build:
+    context: ../../services/lizardfs-chunkserver
+    dockerfile: ../../services/lizardfs-chunkserver/Dockerfile
+
+x-metalogger:
+  &lfs-metalogger
+  <<: *systemd-requirements
+  <<: *default-common
+  image: lizardfs-metalogger:latest
+  build:
+    context: ../../services/lizardfs-metalogger
+    dockerfile: ../../services/lizardfs-metalogger/Dockerfile
+
+services:
+  mfsmaster:
+    <<: *lfs-master
+    ports:
+      - "10421:9421"
+
+  shadowmaster:
+    <<: *lfs-master
+    ports:
+      - "10422:9421"
+
+  metalogger:
+    <<: *lfs-metalogger
+
+  cgiserver:
+    <<: *lfs-cgiserv
+    ports:
+      - "10423:9425"
+
+  chunkserver1:
+    <<: *lfs-chunkserver
+    environment:
+      - LIZARDFS_CHUNKSERVER_HD_COUNT=1
+
+  chunkserver2:
+    <<: *lfs-chunkserver
+    environment:
+      - LIZARDFS_CHUNKSERVER_HD_COUNT=2
+
+  chunkserver3:
+    <<: *lfs-chunkserver
+    environment:
+      - LIZARDFS_CHUNKSERVER_HD_COUNT=3
