@@ -7,6 +7,6 @@ if [ -f "${root_folder}/.env" ]; then
   set +a
 fi
 
-LIZARD_RELEASE_REPOSITORY=${LIZARD_RELEASE_REPOSITORY:-"ictus4u/lizardfs-dist:latest"}
+repository=${LIZARD_RELEASE_REPOSITORY:-"ictus4u/lizardfs-dist:latest"}
 
-DOCKER_BUILDKIT=1 docker build --ssh default -t "${LIZARD_RELEASE_REPOSITORY}" "${root_folder}/services/lizardfs-base"
+docker build -t  "${root_folder}/services/lizardfs-base"

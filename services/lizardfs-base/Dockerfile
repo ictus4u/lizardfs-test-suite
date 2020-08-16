@@ -1,4 +1,3 @@
-# syntax=docker/dockerfile:experimental
 FROM ubuntu:20.04 as build-stage
 
 USER root
@@ -31,9 +30,12 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     zlib1g-dev \
   && apt-get autoremove && apt-get clean && apt-get purge
 
-RUN mkdir -p -m 0600 ~/.ssh \
-  && ssh-keyscan github.com >> /root/.ssh/known_hosts
-RUN --mount=type=ssh git clone git@github.com:lizardfs/lizardfs.git /lizardfs-source
+COPY ./docker/ssh/id_ed25519 /root/.ssh/
+COPY ./docker/ssh/id_ed25519.pub /root/.ssh/
+COPY ./docker/ssh/config /root/.ssh/
+
+RUN ssh-keyscan github.com >> /root/.ssh/known_hosts \
+  && git clone git@github.com:lizardfs/lizardfs.git /lizardfs-source
 
 WORKDIR /lizardfs-source
 RUN ./create-deb-package.sh
