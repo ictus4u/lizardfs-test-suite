@@ -20,6 +20,7 @@ if [ -n "${LIZARDFS_CHUNKSERVER_HD_COUNT}" ]; then
   for i in $(seq 1 ${LIZARDFS_CHUNKSERVER_HD_COUNT}); do
     mkdir -p /mnt/hd${i}/lizardfs_vol
     echo "/mnt/hd${i}/lizardfs_vol" >> /etc/lizardfs/mfshdd.cfg
+    chown -R lizardfs:lizardfs "/mnt/hd${i}/lizardfs_vol"
   done
 fi
 
