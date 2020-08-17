@@ -8,4 +8,6 @@ FROM ${LIZARD_BASE_REPOSITORY}
 COPY --from=build-stage /lizardfs-modules/lizardfs-chunkserver /tmp/install/
 COPY --from=build-stage /lizardfs-modules/lizardfs-common /tmp/install/
 
+EXPOSE 9422
+
 CMD [ "/usr/sbin/mfschunkserver", "-du", "start" ]

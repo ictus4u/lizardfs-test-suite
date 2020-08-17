@@ -35,6 +35,8 @@ x-chunkserver:
   image: lizardfs-chunkserver:latest
   build:
     context: ../../services/lizardfs-chunkserver
+  expose:
+    - "9422"
 
 x-metalogger:
   &lfs-metalogger
