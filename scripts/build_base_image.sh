@@ -9,4 +9,4 @@ fi
 
 LIZARD_RELEASE_REPOSITORY=${LIZARD_RELEASE_REPOSITORY:-"ictus4u/lizardfs-dist:latest"}
 
-docker build -t "${LIZARD_RELEASE_REPOSITORY}" "${root_folder}/services/lizardfs-base"
+docker build -t "${LIZARD_RELEASE_REPOSITORY}" "${root_folder}/services/lizardfs-dist"
