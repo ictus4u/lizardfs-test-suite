@@ -10,4 +10,4 @@ ONBUILD COPY ./docker/docker_entrypoint.sh /
 
 ONBUILD ENTRYPOINT ["/docker_entrypoint.sh"]
 
-VOLUME [ "/config", "/tmp/install" ]
+VOLUME [ "/config" ]
