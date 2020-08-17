@@ -45,3 +45,4 @@ RUN mkdir /lizardfs-dist \
 
 FROM scratch
 COPY --from=build-stage /lizardfs-dist/ /
+VOLUME ["/"]
