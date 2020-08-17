@@ -70,13 +70,22 @@ services:
     <<: *lfs-chunkserver
     environment:
       - LIZARDFS_CHUNKSERVER_HD_COUNT=1
+    volumes:
+      - ./volumes/chunkserver1/hd1:/mnt/hd1:rw
 
   chunkserver2:
     <<: *lfs-chunkserver
     environment:
       - LIZARDFS_CHUNKSERVER_HD_COUNT=2
+    volumes:
+      - ./volumes/chunkserver2/hd1:/mnt/hd1:rw
+      - ./volumes/chunkserver2/hd2:/mnt/hd2:rw
 
   chunkserver3:
     <<: *lfs-chunkserver
     environment:
       - LIZARDFS_CHUNKSERVER_HD_COUNT=3
+    volumes:
+      - ./volumes/chunkserver3/hd1:/mnt/hd1:rw
+      - ./volumes/chunkserver3/hd2:/mnt/hd2:rw
+      - ./volumes/chunkserver3/hd3:/mnt/hd3:rw
