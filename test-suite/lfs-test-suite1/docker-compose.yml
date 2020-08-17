@@ -4,19 +4,8 @@ x-common:
   &default-common
   volumes:
     - ./volumes/config:/config:ro
-
-x-systemd:
-  &systemd-requirements
-  tmpfs:
-    - /tmp
-    - /run
-    - /run/lock
-  volumes:
-    - /sys/fs/cgroup:/sys/fs/cgroup:ro
-
 x-master:
   &lfs-master
-  <<: *systemd-requirements
   <<: *default-common
   image: lizardfs-master:latest
   build:
@@ -33,7 +22,6 @@ x-master:
 
 x-cgiserv:
   &lfs-cgiserv
-  <<: *systemd-requirements
   <<: *default-common
   image: lizardfs-cgiserv:latest
   build:
@@ -43,7 +31,6 @@ x-cgiserv:
 
 x-chunkserver:
   &lfs-chunkserver
-  <<: *systemd-requirements
   <<: *default-common
   image: lizardfs-chunkserver:latest
   build:
@@ -51,7 +38,6 @@ x-chunkserver:
 
 x-metalogger:
   &lfs-metalogger
-  <<: *systemd-requirements
   <<: *default-common
   image: lizardfs-metalogger:latest
   build:
