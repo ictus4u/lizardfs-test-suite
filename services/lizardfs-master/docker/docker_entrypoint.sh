@@ -21,6 +21,10 @@ load_config mfstopology.cfg     /etc/lizardfs/mfstopology.cfg
 load_config mfsgoals.cfg        /etc/lizardfs/mfsgoals.cfg
 load_config globaliolimits.cfg  /etc/lizardfs/globaliolimits.cfg
 
+if [ -n "${PERSONALITY}" ]; then
+  sed -iE "/# PERSONALITY/a PERSONALITY = ${PERSONALITY}" /etc/lizardfs/mfsmaster.cfg
+fi
+
 /usr/sbin/mfsmaster start
 /usr/sbin/mfsmaster stop
 

@@ -48,11 +48,15 @@ services:
     <<: *lfs-master
     ports:
       - "10421:9421"
+    environment:
+      - PERSONALITY=master
 
   shadowmaster:
     <<: *lfs-master
     ports:
       - "10422:9421"
+    environment:
+      - PERSONALITY=shadow
 
   metalogger:
     <<: *lfs-metalogger
