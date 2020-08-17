@@ -43,6 +43,7 @@ RUN mkdir /lizardfs-dist \
   && bash -c 'mv *.{buildinfo,changes,dsc,xz} /lizardfs-dist/' \
   && bash -c 'for i in $(ls *.deb); do name=$(echo $i | sed -E "s/\_.*//"); mkdir -p /lizardfs-dist/$name; mv $i /lizardfs-dist/$name/; done'
 
-FROM scratch
-COPY --from=build-stage /lizardfs-dist/ /
-VOLUME ["/"]
+FROM busybox
+COPY --from=build-stage /lizardfs-dist/ /lizardfs-modules
+VOLUME ["/lizardfs-modules"]
+CMD tail -f /dev/null
