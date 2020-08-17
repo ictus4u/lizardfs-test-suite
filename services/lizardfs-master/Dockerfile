@@ -21,5 +21,4 @@ COPY --from=build-stage /lizardfs-modules/lizardfs-master /tmp/install/
 
 EXPOSE 9419 9420 9424 9421
 
-#CMD [ "/usr/sbin/mfsmaster", "start" ]
-CMD [ "tail", "-f", "/dev/null" ]
+CMD [ "/usr/sbin/mfsmaster", "-d" ]
