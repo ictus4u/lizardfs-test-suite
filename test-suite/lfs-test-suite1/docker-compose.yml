@@ -4,6 +4,7 @@ x-common:
   &default-common
   volumes:
     - ./volumes/config:/config:ro
+
 x-master:
   &lfs-master
   <<: *default-common
@@ -44,6 +45,22 @@ x-metalogger:
   image: lizardfs-metalogger:latest
   build:
     context: ../../services/lizardfs-metalogger
+
+x-client:
+  &lfs-client
+  <<: *default-common
+  image: lizardfs-client:latest
+  build:
+    context: ../../services/lizardfs-client
+# In order to access FUSE
+  devices:
+    - /dev/fuse:/dev/fuse
+# Because https://github.com/docker/docker/issues/16429
+  security_opt:
+    - "apparmor:unconfined"
+# In order to mount lizardfs
+  cap_add:
+    - SYS_ADMIN
 
 services:
   mfsmaster:
@@ -91,3 +108,7 @@ services:
       - ./volumes/chunkserver3/hd1:/mnt/hd1:rw
       - ./volumes/chunkserver3/hd2:/mnt/hd2:rw
       - ./volumes/chunkserver3/hd3:/mnt/hd3:rw
+
+  client1:
+    <<: *lfs-client
+
