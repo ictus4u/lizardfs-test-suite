@@ -29,7 +29,3 @@ fi
 /usr/sbin/mfsmaster stop
 
 exec "$@"
-
-# cat /lib/systemd/system/lizardfs-master.service
-# /usr/sbin/mfsmaster start
-# /usr/sbin/mfsmaster start ; /usr/sbin/mfsmaster stop ; /usr/sbin/mfsmaster start
