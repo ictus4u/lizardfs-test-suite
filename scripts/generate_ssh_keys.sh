@@ -10,6 +10,6 @@ if [ ! -f "${priv_key}" ]; then
 fi
 
 if [ -f "${priv_key}.pub" ]; then
-  echo "Use the generated public key shown bellow for authorizing access to your respostory:"
+  echo "Use the generated public key shown below for authorizing access to your respostory:"
   cat "${priv_key}.pub"
 fi
