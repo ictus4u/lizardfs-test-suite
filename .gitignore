@@ -1,1 +1,4 @@
 **/ssh/id_*
+**/*.swp
+test-suite/*/volumes/*
+!test-suite/*/volumes/config
