@@ -4,6 +4,23 @@ This project will provide a docker-based testing environment for [LizardFS](http
 
 The same Docker-compose file is used to run each different kind of LizardFS service: `master`, `cgiserv`, `chunkserver`, `metalogger`, `client`, and a `shadowmaster`. You tell the container which service to run by stating the port that was exposed.
 
+# Getting Started
+
+These instructions will cover usage information and for the docker container.
+
+## Prerequisities
+
+In order to run this container you'll need docker installed.
+
+* [Linux](https://docs.docker.com/linux/started/)
+
+You'll need to run the files inside of the Scripts folder:
+
+* [Generate SSH keys](/scripts/generate_ssh_keys.sh)
+* [Build base image](/scripts/build_base_image.sh)
+
+Run the docker compose file:
+
 **docker-compose.yml**
 ```yaml
 x-master:
@@ -24,41 +41,25 @@ x-master:
 ...
 ```
 
-# Getting Started
-
-These instructions will cover usage information and for the docker container.
-
-## Prerequisities
-
-In order to run this container you'll need docker installed.
-
-* [Linux](https://docs.docker.com/linux/started/)
-
 ## Usage
-
-### Container Parameters
-
-List the different parameters available to the container
-
-```shell
-docker run give.example.org/of/your/container:vx.x.x parameters
-```
 
 ### Environment Variables
 
-* `VARIABLE_ONE` - A Description
-* `ANOTHER_VAR` - More Description
-* `YOU_GET_THE_IDEA` - And another
+* `ENVIRONMENT_FILE` - The environment file
+* `LIZARD_BASE_REPOSITORY` - The base repository of Lizard
+* `LIZARDFS_CHUNKSERVER_HD_COUNT` - Hard drives count for LizardFs chunk server
 
 ### Volumes
 
-* `/your/file/location` - File location
+* `/test-suite/volumes/config` - A shared volume for the services.
 
 ### Useful File Locations
 
-* `/some/special/script.sh` - List special scripts
+* `/scripts/generate_ssh_keys.sh` - Generate two ssh keys to use them to read the LizardFs code to compile it, without uploading it to the repo.
+* `/scripts/build_base_image.sh` - Build the base image for the services.
   
-* `/magic/dir` - And also directories
+* `/scripts` - Scripts to run before the docker-compose
+* `/services` - List of services to be deployed
 
 ### Services
 
@@ -84,39 +85,9 @@ Docker Compose is the easiest way to deploy a test LizardFS cluster on a single 
 
 This repository comes with a Docker Compose file that can be used to run a test cluster. To get started just clone this repository and run `docker-compose up` in the repository root directory.
 
-```bash
-$ cd lizardfs-test-suite
-$ docker-compose up -d --scale mfsmaster-shadow=2 --scale chunkserver=3 --scale metalogger=4
-```
-
-You can then hit the web interface on `8080` at the IP address of the server running Docker. On the "Servers" tab of the web interface you should be able to see that you have a cluster consisting of X master, X shadow masters, X chunkservers, and X metaloggers. Congratulations, you are running a full LizardFS cluster!
-
-You can experiment with the cluster by creating some files. Exec into one of the client containers and copy `/etc` inside the container to the LizardFS mountpoint at `/mnt/mfs`.
-
-```bash
-$ docker-compose exec client1 bash
-root@containerid:/$ cd /mnt/mfs
-root@containerid:/mnt/mfs$ cp -R /etc .
-```
-
-The web UI will show that you now have XX chunks in your cluster.
-
-![web-ui-screenshot](/web-ui-screenshot.png)
-
-`exec`ing into the other client container will prove that you successfully mounted your LizardFS filesystem on two clients at the same time.
-
-```bash
-$ docker-compose exec client2 bash
-root@containerid:/$ cd /mnt/mfs
-root@containerid:/mnt/mfs$ ls
-etc
-```
-
 ## Built With
 
-* List the software v0.1.3
-* And the version numbers v2.0.0
-* That are in this container v0.3.2
+* Docker-compose v3.7
 
 ## Find Us
 
