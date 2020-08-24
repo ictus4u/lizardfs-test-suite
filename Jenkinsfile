@@ -24,7 +24,7 @@ node {
     def distImage
     def dockerRegistrySecretId = '45d995a9-803d-4dce-9f16-a39165e867ea'
     def dockerRegistry = 'https://registry.aleph.engineering'
-    def tag="${GIT_BRANCH}-${env.BUILD_ID}"
+    def tag="${env.GIT_BRANCH}-${env.BUILD_ID}"
     def buildPrefix = "--build-arg LIZARD_DIST_REPOSITORY=registry.aleph.engineering/lizardfs-dist:${tag} --build-arg LIZARD_BASE_REPOSITORY=registry.aleph.engineering/lizardfs-base:${tag} "
     stage('Clone repository') {
         checkout scm
