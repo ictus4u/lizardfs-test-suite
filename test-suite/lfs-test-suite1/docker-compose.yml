@@ -111,4 +111,3 @@ services:
 
   client1:
     <<: *lfs-client
-
