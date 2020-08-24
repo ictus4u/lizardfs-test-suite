@@ -1,4 +1,5 @@
 **/ssh/id_*
 **/*.swp
+vendors/*
 test-suite/*/volumes/*
 !test-suite/*/volumes/config
