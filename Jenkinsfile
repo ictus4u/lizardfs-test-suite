@@ -44,54 +44,44 @@ node {
         }
     }
 
-    stage('Build dist image') {
-        def imageName = "${registryPrefix}/lizardfs-dist"
-        def imageBuildCommand = "-f services/lizardfs-dist/Dockerfile ."
+    stage('Build base images') {
+        parallel 'dist':{
+            stage('Build dist image') {
+                def imageName = "${registryPrefix}/lizardfs-dist"
+                def imageBuildCommand = "-f services/lizardfs-dist/Dockerfile ."
 
-        pullImage(imageName, "builder", dockerRegistry, dockerRegistrySecretId)
-        def builderImage = docker.build("${imageName}:builder", "--target build-stage --cache-from ${imageName}:builder " + imageBuildCommand)
+                pullImage(imageName, "builder", dockerRegistry, dockerRegistrySecretId)
+                def builderImage = docker.build("${imageName}:builder", "--target build-stage --cache-from ${imageName}:builder " + imageBuildCommand)
 
-        pullImage(imageName, "latest", dockerRegistry, dockerRegistrySecretId)
-        def distImage = docker.build("${imageName}:${tag}", "--cache-from ${imageName}:builder --cache-from ${imageName}:latest " + imageBuildCommand)
+                pullImage(imageName, "latest", dockerRegistry, dockerRegistrySecretId)
+                def distImage = docker.build("${imageName}:${tag}", "--cache-from ${imageName}:builder --cache-from ${imageName}:latest " + imageBuildCommand)
 
-        pushImage(distImage, tag, dockerRegistry, dockerRegistrySecretId)
-        pushImage(distImage, "latest", dockerRegistry, dockerRegistrySecretId)
-        pushImage(builderImage, "builder", dockerRegistry, dockerRegistrySecretId)
+                pushImage(distImage, tag, dockerRegistry, dockerRegistrySecretId)
+                pushImage(distImage, "latest", dockerRegistry, dockerRegistrySecretId)
+                pushImage(builderImage, "builder", dockerRegistry, dockerRegistrySecretId)
+            }
+        },
+        'base':{
+            stage('Build base image') {
+                def imageName = "${registryPrefix}/lizardfs-base"
+                def imageBuildCommand = "./services/lizardfs-base"
+                buildDockerImageWithSimpleCache(imageName, tag, imageBuildCommand, dockerRegistry, dockerRegistrySecretId)
+            }
+        }
     }
 
-    stage('Build base image') {
-        def imageName = "${registryPrefix}/lizardfs-base"
-        def imageBuildCommand = "./services/lizardfs-base"
-        buildDockerImageWithSimpleCache(imageName, tag, imageBuildCommand, dockerRegistry, dockerRegistrySecretId)
-    }
 
-    stage('Build master') {
-        def imageName = "${registryPrefix}/lizardfs-master"
-        def imageBuildCommand = buildPrefix + "./services/lizardfs-master"
-        buildDockerImageWithSimpleCache(imageName, tag, imageBuildCommand, dockerRegistry, dockerRegistrySecretId)
-    }
-
-    stage('Build cgiserv') {
-        def imageName = "${registryPrefix}/lizardfs-cgiserv"
-        def imageBuildCommand = buildPrefix + "./services/lizardfs-cgiserv"
-        buildDockerImageWithSimpleCache(imageName, tag, imageBuildCommand, dockerRegistry, dockerRegistrySecretId)
-    }
-
-    stage('Build chunkserver') {
-        def imageName = "${registryPrefix}/lizardfs-chunkserver"
-        def imageBuildCommand = buildPrefix + "./services/lizardfs-chunkserver"
-        buildDockerImageWithSimpleCache(imageName, tag, imageBuildCommand, dockerRegistry, dockerRegistrySecretId)
-    }
-
-    stage('Build metalogger') {
-        def imageName = "${registryPrefix}/lizardfs-metalogger"
-        def imageBuildCommand = buildPrefix + "./services/lizardfs-metalogger"
-        buildDockerImageWithSimpleCache(imageName, tag, imageBuildCommand, dockerRegistry, dockerRegistrySecretId)
-    }
-
-    stage('Build client') {
-        def imageName = "${registryPrefix}/lizardfs-client"
-        def imageBuildCommand = buildPrefix + "./services/lizardfs-client"
-        buildDockerImageWithSimpleCache(imageName, tag, imageBuildCommand, dockerRegistry, dockerRegistrySecretId)
+    stage("Build lizardfs modules") {
+        def branchedStages = [:]
+        for (STAGE_NAME in ["master", "cgiserv", "chunkserver", "metalogger", "client"]) {
+            branchedStages["${STAGE_NAME}"] = {
+                stage("Build: ${STAGE_NAME}") {
+                    def imageName = "${registryPrefix}/lizardfs-${STAGE_NAME}"
+                    def imageBuildCommand = buildPrefix + "./services/lizardfs-${STAGE_NAME}"
+                    buildDockerImageWithSimpleCache(imageName, tag, imageBuildCommand, dockerRegistry, dockerRegistrySecretId)
+                }
+            }
+        }
+        parallel branchedStages
     }
 }
