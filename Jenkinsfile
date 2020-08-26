@@ -99,8 +99,7 @@ node(label: 'docker') {
             branchedStages["${STAGE_NAME}"] = {
                 stage("Start: ${STAGE_NAME}") {
                     docker.withRegistry(dockerRegistry, dockerRegistrySecretId) {
-                        sh "docker-compose -f test-suite/${STAGE_NAME}/docker-compose.yml down"
-                        sh "docker-compose -f test-suite/${STAGE_NAME}/docker-compose.yml up -d"
+                        sh "docker-compose -f test-suite/${STAGE_NAME}/docker-compose.yml up -d --remove-orphans"
                     }
                 }
             }
