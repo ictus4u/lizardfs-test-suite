@@ -34,6 +34,8 @@ WORKDIR /lizardfs-source
 COPY ./vendors/lizardfs ./
 RUN git init \
   && git add . \
+  && git config --global user.email "you@example.com" \
+  && git config --global user.name "Your Name" \
   && git commit -m "Create this repo for the create-deb-package.sh script to work" \
   && ./create-deb-package.sh
 RUN mkdir /lizardfs-dist \
