@@ -65,9 +65,33 @@ node {
         buildDockerImageWithSimpleCache(imageName, tag, imageBuildCommand, dockerRegistry, dockerRegistrySecretId)
     }
 
-    stage('Build master image') {
+    stage('Build master') {
         def imageName = "${registryPrefix}/lizardfs-master"
         def imageBuildCommand = buildPrefix + "./services/lizardfs-master"
+        buildDockerImageWithSimpleCache(imageName, tag, imageBuildCommand, dockerRegistry, dockerRegistrySecretId)
+    }
+
+    stage('Build cgiserv') {
+        def imageName = "${registryPrefix}/lizardfs-cgiserv"
+        def imageBuildCommand = buildPrefix + "./services/lizardfs-cgiserv"
+        buildDockerImageWithSimpleCache(imageName, tag, imageBuildCommand, dockerRegistry, dockerRegistrySecretId)
+    }
+
+    stage('Build chunkserver') {
+        def imageName = "${registryPrefix}/lizardfs-chunkserver"
+        def imageBuildCommand = buildPrefix + "./services/lizardfs-chunkserver"
+        buildDockerImageWithSimpleCache(imageName, tag, imageBuildCommand, dockerRegistry, dockerRegistrySecretId)
+    }
+
+    stage('Build metalogger') {
+        def imageName = "${registryPrefix}/lizardfs-metalogger"
+        def imageBuildCommand = buildPrefix + "./services/lizardfs-metalogger"
+        buildDockerImageWithSimpleCache(imageName, tag, imageBuildCommand, dockerRegistry, dockerRegistrySecretId)
+    }
+
+    stage('Build client') {
+        def imageName = "${registryPrefix}/lizardfs-client"
+        def imageBuildCommand = buildPrefix + "./services/lizardfs-client"
         buildDockerImageWithSimpleCache(imageName, tag, imageBuildCommand, dockerRegistry, dockerRegistrySecretId)
     }
 }
