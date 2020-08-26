@@ -13,6 +13,12 @@ def pushImage(image, tag, dockerRegistry, dockerRegistrySecretId){
     }
 }
 
+def compose(composeArgs, dockerRegistry, dockerRegistrySecretId){
+    docker.withRegistry(dockerRegistry, dockerRegistrySecretId) {
+        sh "docker-compose ${composeArgs}"
+    }
+}
+
 def buildDockerImageWithSimpleCache(
     imageName,
     imageTag,
@@ -27,7 +33,7 @@ def buildDockerImageWithSimpleCache(
         return image
 }
 
-node {
+node(label: 'docker') {
     def dockerRegistrySecretId = '45d995a9-803d-4dce-9f16-a39165e867ea'
     def registryPrefix = "registry.aleph.engineering"
     def dockerRegistry = "https://${registryPrefix}"
@@ -44,9 +50,9 @@ node {
         }
     }
 
-    stage('Build base images') {
+    stage('Build: base images') {
         parallel 'dist':{
-            stage('Build dist image') {
+            stage('Image: dist') {
                 def imageName = "${registryPrefix}/lizardfs-dist"
                 def imageBuildCommand = "-f services/lizardfs-dist/Dockerfile ."
 
@@ -62,7 +68,7 @@ node {
             }
         },
         'base':{
-            stage('Build base image') {
+            stage('Image: base') {
                 def imageName = "${registryPrefix}/lizardfs-base"
                 def imageBuildCommand = "./services/lizardfs-base"
                 buildDockerImageWithSimpleCache(imageName, tag, imageBuildCommand, dockerRegistry, dockerRegistrySecretId)
@@ -71,11 +77,11 @@ node {
     }
 
 
-    stage("Build lizardfs modules") {
+    stage("Build: lizardfs modules") {
         def branchedStages = [:]
         for (STAGE_NAME in ["master", "cgiserv", "chunkserver", "metalogger", "client"]) {
             branchedStages["${STAGE_NAME}"] = {
-                stage("Build: ${STAGE_NAME}") {
+                stage("Module: ${STAGE_NAME}") {
                     def imageName = "${registryPrefix}/lizardfs-${STAGE_NAME}"
                     def imageBuildCommand = buildPrefix + "./services/lizardfs-${STAGE_NAME}"
                     buildDockerImageWithSimpleCache(imageName, tag, imageBuildCommand, dockerRegistry, dockerRegistrySecretId)
@@ -83,5 +89,11 @@ node {
             }
         }
         parallel branchedStages
+    }
+
+    stage("Run"){
+        docker.withRegistry(dockerRegistry, dockerRegistrySecretId) {
+            sh "docker-compose -f test-suite/lfs-test-suite1/docker-compose.yml up -d"
+        }
     }
 }
