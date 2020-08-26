@@ -32,7 +32,10 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 WORKDIR /lizardfs-source
 COPY ./vendors/lizardfs ./
-RUN ./create-deb-package.sh
+RUN git init \
+  && git add . \
+  && git commit -m "Create this repo for the create-deb-package.sh script to work" \
+  && ./create-deb-package.sh
 RUN mkdir /lizardfs-dist \
   && bash -c 'mv *.{buildinfo,changes,dsc,xz} /lizardfs-dist/' \
   && bash -c 'for i in $(ls *.deb); do name=$(echo $i | sed -E "s/\_.*//"); mkdir -p /lizardfs-dist/$name; mv $i /lizardfs-dist/$name/; done'
