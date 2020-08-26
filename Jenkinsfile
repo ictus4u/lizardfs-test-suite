@@ -94,7 +94,8 @@ node(label: 'docker') {
 
     stage("Start: lizardfs test-suites") {
         def branchedStages = [:]
-        for (STAGE_NAME in ["lfs-test-suite1"]) {
+        stage_names = ["lfs-test-suite1"]
+        stage_names.each { STAGE_NAME ->
             branchedStages["${STAGE_NAME}"] = {
                 stage("Start: ${STAGE_NAME}") {
                     docker.withRegistry(dockerRegistry, dockerRegistrySecretId) {
