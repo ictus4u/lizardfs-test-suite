@@ -91,9 +91,18 @@ node(label: 'docker') {
         parallel branchedStages
     }
 
-    stage("Run"){
-        docker.withRegistry(dockerRegistry, dockerRegistrySecretId) {
-            sh "docker-compose -f test-suite/lfs-test-suite1/docker-compose.yml up -d"
+    stage("Start: lizardfs test-suites") {
+        def branchedStages = [:]
+        for (STAGE_NAME in ["lfs-test-suite1"]) {
+            branchedStages["${STAGE_NAME}"] = {
+                stage("Start: ${STAGE_NAME}") {
+                    docker.withRegistry(dockerRegistry, dockerRegistrySecretId) {
+                        sh "docker-compose -f test-suite/${STAGE_NAME}/docker-compose.yml down"
+                        sh "docker-compose -f test-suite/${STAGE_NAME}/docker-compose.yml up -d"
+                    }
+                }
+            }
         }
+        parallel branchedStages
     }
 }
