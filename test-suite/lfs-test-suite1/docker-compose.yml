@@ -1,9 +1,15 @@
 version: "3.7"
 
+networks:
+  monitor:
+    driver: bridge
+
 x-common:
   &default-common
   volumes:
     - ./volumes/config:/config:ro
+  networks:
+    - monitor
 
 x-master:
   &lfs-master
