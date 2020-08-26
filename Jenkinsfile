@@ -79,7 +79,8 @@ node(label: 'docker') {
 
     stage("Build: lizardfs modules") {
         def branchedStages = [:]
-        for (STAGE_NAME in ["master", "cgiserv", "chunkserver", "metalogger", "client"]) {
+        stage_names = ["master", "cgiserv", "chunkserver", "metalogger", "client"]
+        stage_names.each { STAGE_NAME ->
             branchedStages["${STAGE_NAME}"] = {
                 stage("Module: ${STAGE_NAME}") {
                     def imageName = "${registryPrefix}/lizardfs-${STAGE_NAME}"
