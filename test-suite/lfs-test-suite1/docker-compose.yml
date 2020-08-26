@@ -8,7 +8,7 @@ x-common:
 x-master:
   &lfs-master
   <<: *default-common
-  image: lizardfs-master:latest
+  image: registry.aleph.engineering/lizardfs-master:latest
   build:
     context: ../../services/lizardfs-master
   expose:
@@ -24,7 +24,7 @@ x-master:
 x-cgiserv:
   &lfs-cgiserv
   <<: *default-common
-  image: lizardfs-cgiserv:latest
+  image: registry.aleph.engineering/lizardfs-cgiserv:latest
   build:
     context: ../../services/lizardfs-cgiserv
   expose:
@@ -33,7 +33,7 @@ x-cgiserv:
 x-chunkserver:
   &lfs-chunkserver
   <<: *default-common
-  image: lizardfs-chunkserver:latest
+  image: registry.aleph.engineering/lizardfs-chunkserver:latest
   build:
     context: ../../services/lizardfs-chunkserver
   expose:
@@ -42,14 +42,14 @@ x-chunkserver:
 x-metalogger:
   &lfs-metalogger
   <<: *default-common
-  image: lizardfs-metalogger:latest
+  image: registry.aleph.engineering/lizardfs-metalogger:latest
   build:
     context: ../../services/lizardfs-metalogger
 
 x-client:
   &lfs-client
   <<: *default-common
-  image: lizardfs-client:latest
+  image: registry.aleph.engineering/lizardfs-client:latest
   build:
     context: ../../services/lizardfs-client
 # In order to access FUSE
@@ -89,26 +89,16 @@ services:
     <<: *lfs-chunkserver
     environment:
       - LIZARDFS_CHUNKSERVER_HD_COUNT=1
-    volumes:
-      - ./volumes/chunkserver1/hd1:/mnt/hd1:rw
 
   chunkserver2:
     <<: *lfs-chunkserver
     environment:
       - LIZARDFS_CHUNKSERVER_HD_COUNT=2
-    volumes:
-      - ./volumes/chunkserver2/hd1:/mnt/hd1:rw
-      - ./volumes/chunkserver2/hd2:/mnt/hd2:rw
 
   chunkserver3:
     <<: *lfs-chunkserver
     environment:
       - LIZARDFS_CHUNKSERVER_HD_COUNT=3
-    volumes:
-      - ./volumes/chunkserver3/hd1:/mnt/hd1:rw
-      - ./volumes/chunkserver3/hd2:/mnt/hd2:rw
-      - ./volumes/chunkserver3/hd3:/mnt/hd3:rw
 
   client1:
     <<: *lfs-client
-
