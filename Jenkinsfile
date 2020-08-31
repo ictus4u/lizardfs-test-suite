@@ -94,7 +94,7 @@ node(label: 'docker') {
 
     stage("Start: lizardfs test-suites") {
         def branchedStages = [:]
-        stage_names = ["lfs-test-suite1"]
+        stage_names = ["lfs-test-suite1","lfs-test-suite2"]
         stage_names.each { STAGE_NAME ->
             branchedStages["${STAGE_NAME}"] = {
                 stage("Start: ${STAGE_NAME}") {

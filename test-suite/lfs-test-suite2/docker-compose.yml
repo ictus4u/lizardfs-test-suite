@@ -1,0 +1,90 @@
+version: "3.7"
+
+networks:
+  monitor:
+    driver: bridge
+
+x-common:
+  &default-common
+  volumes:
+    - ./volumes/config:/config:ro
+  networks:
+    - monitor
+
+x-master:
+  &lfs-master
+  <<: *default-common
+  image: registry.aleph.engineering/lizardfs-master:latest
+  build:
+    context: ../../services/lizardfs-master
+  expose:
+    # metaloggers module
+    - "9419"
+    # chunkservers module
+    - "9420"
+    # tapeservers module
+    - "9424"
+    # main master server module
+    - "9421"
+
+x-cgiserv:
+  &lfs-cgiserv
+  <<: *default-common
+  image: registry.aleph.engineering/lizardfs-cgiserv:latest
+  build:
+    context: ../../services/lizardfs-cgiserv
+  expose:
+    - "9425"
+
+x-chunkserver:
+  &lfs-chunkserver
+  <<: *default-common
+  image: registry.aleph.engineering/lizardfs-chunkserver:latest
+  build:
+    context: ../../services/lizardfs-chunkserver
+  expose:
+    - "9422"
+
+x-metalogger:
+  &lfs-metalogger
+  <<: *default-common
+  image: registry.aleph.engineering/lizardfs-metalogger:latest
+  build:
+    context: ../../services/lizardfs-metalogger
+
+x-client:
+  &lfs-client
+  <<: *default-common
+  image: registry.aleph.engineering/lizardfs-client:latest
+  build:
+    context: ../../services/lizardfs-client
+# In order to access FUSE
+  devices:
+    - /dev/fuse:/dev/fuse
+# Because https://github.com/docker/docker/issues/16429
+  security_opt:
+    - "apparmor:unconfined"
+# In order to mount lizardfs
+  cap_add:
+    - SYS_ADMIN
+
+services:
+  mfsmaster:
+    <<: *lfs-master
+    ports:
+      - "10424:9421"
+    environment:
+      - PERSONALITY=master
+
+  cgiserver:
+    <<: *lfs-cgiserv
+    ports:
+      - "10425:9425"
+
+  chunkserver1:
+    <<: *lfs-chunkserver
+    environment:
+      - LIZARDFS_CHUNKSERVER_HD_COUNT=1
+
+  client1:
+    <<: *lfs-client
