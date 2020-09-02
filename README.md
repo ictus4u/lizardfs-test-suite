@@ -6,16 +6,15 @@ This project provides a docker-based testing environment for [LizardFS](https://
 
 ## Getting Started
 
-
 The project is structured in 3 folders:
-* _scripts_: Contains utility scripts for preparing the project to run..
-* _services_: here reside the configuration for building the Docker images for the services, mainly a Dockerfile per each service and an entrypoint script for taking care of runtime settings.
-* _test-suite_: contains a first `lfs-test-suite1` configuration. It's described by a [docker-compose.yml](test-suite/lfs-test-suite1/docker-compose.yml) file.
+* _scripts_: Contains utility scripts for preparing the project to run.
+* _services_: Has the configuration for building the Docker images for the services, mainly a Dockerfile per each service and an entrypoint script for taking care of runtime settings.
+* _test-suite_: Contains a first `lfs-test-suite1` configuration. It's described by a [docker-compose.yml](test-suite/lfs-test-suite1/docker-compose.yml) file.
 
 The services folder has two special images:
 
-* _lizarfs-dist_ is where the LizardFS modules are built from source code of their [official repository](https://github.com/lizardfs/lizardfs)
-* _lizardfs-base_ is a ubuntu based image on top of wich the rest of the LizardFS service images are built.
+* _lizarfs-dist_ is where the LizardFS modules are built from the source code of their [official repository](https://github.com/lizardfs/lizardfs)
+* _lizardfs-base_ is an ubuntu based image on top of which the rest of the LizardFS service images are built.
 
 ## Prerequisities
 
@@ -57,8 +56,8 @@ x-master:
 ### Environment Variables
 
 * `ENVIRONMENT_FILE` - The environment file
-* `LIZARD_BASE_REPOSITORY` - The base repository of Lizard
-* `LIZARDFS_CHUNKSERVER_HD_COUNT` - Hard drives count for LizardFs chunk server
+* `LIZARD_BASE_REPOSITORY` - The LizardFS base repository
+* `LIZARDFS_CHUNKSERVER_HD_COUNT` - Hard drives count for LizardFs chunk servers
 
 ### Volumes
 
@@ -66,10 +65,9 @@ x-master:
 
 ### Useful File Locations
 
-* `/scripts/build_base_image.sh` - Build the base image for the services.
-  
-* `/scripts` - Scripts to run before the docker-compose
-* `/services` - List of services to be deployed
+* `/scripts/build_base_image.sh` - Builds the base image for the services.
+* `/scripts` - Scripts to run before the docker-compose.
+* `/services` - List of services to be deployed.
 
 ### Services
 
@@ -87,11 +85,11 @@ You can run the container with the `client` command and it will look for and con
 
 ## Deployment pipeline
 
-a [Jenkinsfile](Jenkinsfile) was added in order to aothoamite the build abd deployment process. 
+A [Jenkinsfile](Jenkinsfile) was added in order to automatize the build and deployment process. 
 
 ### Docker Compose
 
-Docker Compose is a way to deploy a test LizardFS cluster on a single machine. This is a great way to test the features of LizardFS. Because it only runs on a single machine this setup not useful in production.
+Docker Compose is a way to deploy a test LizardFS cluster on a single machine. This is a great way to test the features of LizardFS. Because it only runs on a single machine, this setup is not useful in production environment.
 
 This repository comes with a Docker Compose file that can be used to run a test cluster. To get started just clone this repository and run `docker-compose up` in the repository root directory.
 
