@@ -1,4 +1,5 @@
 #!/usr/bin/env sh
+set -eu
 LIZARDFS_CONFIG_SOURCE=${LIZARDFS_CONFIG_SOURCE:-/usr/share/doc/lizardfs-metalogger/examples}
 
 load_config() {
@@ -10,8 +11,6 @@ load_config() {
     cp "${LIZARDFS_CONFIG_SOURCE}/${src_config}" "${dst_config}"
   fi
 }
-
-dpkg -i  /tmp/install/lizardfs-*.deb
 
 chown -R lizardfs:lizardfs /var/lib/lizardfs
 

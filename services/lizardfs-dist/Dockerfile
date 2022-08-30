@@ -1,11 +1,12 @@
-FROM ubuntu:20.04 as build-stage
-
-USER root
-
-ENV DEBIAN_FRONTEND=noninteractive
+ARG BASE_IMAGE=ubuntu:22.04
+FROM ${BASE_IMAGE} as build-stage
+ENV LC_ALL="C"
 ENV TZ="UTC"
 
-RUN apt-get update && apt-get install -y --no-install-recommends \
+RUN set -ex ; \
+    apt-get update ; \
+    DEBIAN_FRONTEND=noninteractive \
+    apt-get install -y --no-install-recommends \
     asciidoc \
     apt-utils \
     build-essential \
@@ -25,24 +26,20 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     lsb-release \
     pkg-config \
     xsltproc \
-    ssh \
     unzip \
-    zlib1g-dev \
-  && apt-get autoremove && apt-get clean && apt-get purge
+    zlib1g-dev ; \
+    rm -rf /var/lib/apt/lists/*
 
 WORKDIR /lizardfs-source
 COPY ./vendors/lizardfs ./
-RUN git init \
-  && git add . \
-  && git config --global user.email "you@example.com" \
-  && git config --global user.name "Your Name" \
-  && git commit -m "Create this repo for the create-deb-package.sh script to work" \
-  && ./create-deb-package.sh
-RUN mkdir /lizardfs-dist \
-  && bash -c 'mv *.{buildinfo,changes,dsc,xz} /lizardfs-dist/' \
-  && bash -c 'for i in $(ls *.deb); do name=$(echo $i | sed -E "s/\_.*//"); mkdir -p /lizardfs-dist/$name; mv $i /lizardfs-dist/$name/; done'
+
+RUN set -e ; \
+    ./create-deb-package.sh ; \
+    mkdir /lizardfs-dist ; \
+    bash -c 'mv *.{buildinfo,changes,dsc,xz} /lizardfs-dist/' ; \
+    bash -c 'for i in $(ls *.deb); do name=$(echo $i | sed -E "s/\_.*//"); mkdir -p /lizardfs-dist/$name; mv $i /lizardfs-dist/$name/; done'
 
 FROM busybox
 COPY --from=build-stage /lizardfs-dist/ /lizardfs-modules
 VOLUME ["/lizardfs-modules"]
-CMD tail -f /dev/null
+CMD cat

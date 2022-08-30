@@ -1,22 +1,27 @@
 version: "3.7"
 
 networks:
-  monitor:
-    driver: bridge
+  default:
+    external: true
+    name: lfs-manager-development-network
+
 
 x-common:
   &default-common
-  volumes:
-    - ./volumes/config:/config:ro
-  networks:
-    - monitor
+  expose:
+    - 0
 
 x-master:
   &lfs-master
   <<: *default-common
-  image: registry.aleph.engineering/lizardfs-master:latest
+  image: "registry.lizardfs.com/baldor/lizardfs-master:latest"
   build:
     context: ../../services/lizardfs-master
+    args:
+      LIZARD_BASE_REPOSITORY: "registry.lizardfs.com/baldor/lizardfs-base:latest"
+    cache_from:
+      - "registry.lizardfs.com/baldor/lizardfs-base:latest"
+      - "registry.lizardfs.com/baldor/lizardfs-master:latest"
   expose:
     # metaloggers module
     - "9419"
@@ -30,58 +35,92 @@ x-master:
 x-cgiserv:
   &lfs-cgiserv
   <<: *default-common
-  image: registry.aleph.engineering/lizardfs-cgiserv:latest
+  image: registry.lizardfs.com/baldor/lizardfs-cgiserv:latest
   build:
     context: ../../services/lizardfs-cgiserv
+    args:
+      LIZARD_BASE_REPOSITORY: "registry.lizardfs.com/baldor/lizardfs-base:latest"
+    cache_from:
+      - "registry.lizardfs.com/baldor/lizardfs-base:latest"
+      - "registry.lizardfs.com/baldor/lizardfs-cgiserv:latest"
   expose:
     - "9425"
 
 x-chunkserver:
   &lfs-chunkserver
   <<: *default-common
-  image: registry.aleph.engineering/lizardfs-chunkserver:latest
+  image: registry.lizardfs.com/baldor/lizardfs-chunkserver:latest
   build:
     context: ../../services/lizardfs-chunkserver
+    args:
+      LIZARD_BASE_REPOSITORY: "registry.lizardfs.com/baldor/lizardfs-base:latest"
+    cache_from:
+      - "registry.lizardfs.com/baldor/lizardfs-base:latest"
+      - "registry.lizardfs.com/baldor/lizardfs-chunkserver:latest"
   expose:
     - "9422"
 
 x-metalogger:
   &lfs-metalogger
   <<: *default-common
-  image: registry.aleph.engineering/lizardfs-metalogger:latest
+  image: registry.lizardfs.com/baldor/lizardfs-metalogger:latest
   build:
     context: ../../services/lizardfs-metalogger
+    args:
+      LIZARD_BASE_REPOSITORY: "registry.lizardfs.com/baldor/lizardfs-base:latest"
+    cache_from:
+      - "registry.lizardfs.com/baldor/lizardfs-base:latest"
+      - "registry.lizardfs.com/baldor/lizardfs-metalogger:latest"
 
 x-client:
   &lfs-client
   <<: *default-common
-  image: registry.aleph.engineering/lizardfs-client:latest
+  image: registry.lizardfs.com/baldor/lizardfs-client:latest
   build:
     context: ../../services/lizardfs-client
-# In order to access FUSE
+    args:
+      LIZARD_BASE_REPOSITORY: "registry.lizardfs.com/baldor/lizardfs-base:latest"
+    cache_from:
+      - "registry.lizardfs.com/baldor/lizardfs-base:latest"
+      - "registry.lizardfs.com/baldor/lizardfs-client:latest"
+  # In order to access FUSE
   devices:
     - /dev/fuse:/dev/fuse
-# Because https://github.com/docker/docker/issues/16429
+  # Because https://github.com/docker/docker/issues/16429
   security_opt:
     - "apparmor:unconfined"
-# In order to mount lizardfs
+  # In order to mount lizardfs
   cap_add:
     - SYS_ADMIN
 
 services:
   mfsmaster:
     <<: *lfs-master
-    ports:
-      - "10421:9421"
+    # ports:
+    #   # metaloggers module
+    #   - "9419:9419"
+    #   # chunkservers module
+    #   - "9420:9420"
+    #   # tapeservers module
+    #   - "9424:9424"
+    #   # main master server module
+    #   - "9421:9421"
     environment:
       - PERSONALITY=master
+    volumes:
+      - ./volumes/config/:/config:ro
+      - ./volumes/master/config/:/etc/mfs/
+      - ./volumes/master/metadata/:/var/lib/mfs/
+      - ./volumes/master/log/:/var/log/
 
   shadowmaster:
     <<: *lfs-master
-    ports:
-      - "10422:9421"
+    # ports:
+    #   - "10422:9421"
     environment:
       - PERSONALITY=shadow
+    depends_on:
+      - mfsmaster
 
   metalogger:
     <<: *lfs-metalogger
@@ -89,22 +128,80 @@ services:
   cgiserver:
     <<: *lfs-cgiserv
     ports:
-      - "10423:9425"
+      - "9425:9425"
 
   chunkserver1:
     <<: *lfs-chunkserver
     environment:
       - LIZARDFS_CHUNKSERVER_HD_COUNT=1
+    # ports:
+    #   # metaloggers module
+    #   - "9422:9422"
+    volumes:
+      - ./volumes/config/:/config:ro
+      - ./volumes/chunkserver1/config/:/etc/mfs/
+      - ./volumes/chunkserver1/metadata/:/var/lib/mfs/
+      - ./volumes/chunkserver1/log/:/var/log/
+      - ./volumes/chunkserver1/hdd/:/hdd/
 
   chunkserver2:
     <<: *lfs-chunkserver
     environment:
-      - LIZARDFS_CHUNKSERVER_HD_COUNT=2
+      - LIZARDFS_CHUNKSERVER_HD_COUNT=1
+    # ports:
+    #   # metaloggers module
+    #   - "9422:9422"
+    volumes:
+      - ./volumes/config/:/config:ro
+      - ./volumes/chunkserver2/config/:/etc/mfs/
+      - ./volumes/chunkserver2/metadata/:/var/lib/mfs/
+      - ./volumes/chunkserver2/log/:/var/log/
+      - ./volumes/chunkserver2/hdd/:/hdd/
 
   chunkserver3:
     <<: *lfs-chunkserver
     environment:
-      - LIZARDFS_CHUNKSERVER_HD_COUNT=3
+      - LIZARDFS_CHUNKSERVER_HD_COUNT=1
+    # ports:
+    #   # metaloggers module
+    #   - "9422:9422"
+    volumes:
+      - ./volumes/config/:/config:ro
+      - ./volumes/chunkserver3/config/:/etc/mfs/
+      - ./volumes/chunkserver3/metadata/:/var/lib/mfs/
+      - ./volumes/chunkserver3/log/:/var/log/
+      - ./volumes/chunkserver3/hdd/:/hdd/
+
+  chunkserver4:
+    <<: *lfs-chunkserver
+    environment:
+      - LIZARDFS_CHUNKSERVER_HD_COUNT=1
+    # ports:
+    #   # metaloggers module
+    #   - "9422:9422"
+    volumes:
+      - ./volumes/config/:/config:ro
+      - ./volumes/chunkserver4/config/:/etc/mfs/
+      - ./volumes/chunkserver4/metadata/:/var/lib/mfs/
+      - ./volumes/chunkserver4/log/:/var/log/
+      - ./volumes/chunkserver4/hdd/:/hdd/
+
+  chunkserver5:
+    <<: *lfs-chunkserver
+    environment:
+      - LIZARDFS_CHUNKSERVER_HD_COUNT=1
+    # ports:
+    #   # metaloggers module
+    #   - "9422:9422"
+    volumes:
+      - ./volumes/config/:/config:ro
+      - ./volumes/chunkserver5/config/:/etc/mfs/
+      - ./volumes/chunkserver5/metadata/:/var/lib/mfs/
+      - ./volumes/chunkserver5/log/:/var/log/
+      - ./volumes/chunkserver5/hdd/:/hdd/
 
   client1:
     <<: *lfs-client
+    volumes:
+      - ./volumes/client1/log/:/var/log/
+      - /home/baldor/Documents/books:/tmp/

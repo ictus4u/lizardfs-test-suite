@@ -1,11 +1,17 @@
-ARG LIZARD_BASE_REPOSITORY="ictus4u/lizardfs-base:latest"
-ARG LIZARD_DIST_REPOSITORY="ictus4u/lizardfs-dist:latest"
-
-FROM ${LIZARD_DIST_REPOSITORY} as build-stage
+ARG LIZARD_BASE_REPOSITORY="registry.lizardfs.com/baldor/lizardfs-base:latest"
 
 FROM ${LIZARD_BASE_REPOSITORY}
 
-COPY --from=build-stage /lizardfs-modules/lizardfs-common /tmp/install/
-COPY --from=build-stage /lizardfs-modules/lizardfs-metalogger /tmp/install/
+RUN set -ex ; \
+    apt-get update; \
+    apt-get install -y --no-install-recommends \
+    lizardfs-common \
+    lizardfs-metalogger ; \
+    rm -rf /var/lib/apt/lists/*
+
+VOLUME [ "/config" ]
+
+COPY ./docker/docker_entrypoint.sh /
+ENTRYPOINT [ "/usr/bin/tini", "--", "/docker_entrypoint.sh" ]
 
 CMD [ "/usr/sbin/mfsmetalogger", "-du", "start" ]

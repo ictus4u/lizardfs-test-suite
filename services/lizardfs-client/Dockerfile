@@ -1,19 +1,22 @@
-ARG LIZARD_BASE_REPOSITORY="ictus4u/lizardfs-base:latest"
-ARG LIZARD_DIST_REPOSITORY="ictus4u/lizardfs-dist:latest"
-
-FROM ${LIZARD_DIST_REPOSITORY} as build-stage
+ARG LIZARD_BASE_REPOSITORY="registry.lizardfs.com/baldor/lizardfs-base:latest"
 
 FROM ${LIZARD_BASE_REPOSITORY}
 
-COPY --from=build-stage /lizardfs-modules/lizardfs-client /tmp/install/
+RUN set -ex ; \
+    apt-get update; \
+    apt-get install -y --no-install-recommends \
+    bash-completion \
+    fuse3>=3.2.3 \
+    lizardfs-adm=3.12.0 \
+    lizardfs-client=3.12.0 \
+    lizardfs-client3=3.13.0; \
+    rm -rf /var/lib/apt/lists/*
 
-RUN apt-get update \
-    && apt-get install -y \
-      fuse>=2.8 \
-      bash-completion \
-    && apt-get clean \
-    && rm -rf /var/lib/apt/lists/*
+RUN mkdir -p /mnt/lizardfs
 
-USER root
+VOLUME [ "/config" ]
 
-CMD tail -f /dev/null
+COPY ./docker/docker_entrypoint.sh /
+ENTRYPOINT [ "/usr/bin/tini", "--", "/docker_entrypoint.sh" ]
+
+CMD ["mfsmount", "-f", "/mnt/lizardfs"]
