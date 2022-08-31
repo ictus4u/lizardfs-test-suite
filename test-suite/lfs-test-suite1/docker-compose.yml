@@ -109,8 +109,8 @@ services:
       - PERSONALITY=master
     volumes:
       - ./volumes/config/:/config:ro
-      - ./volumes/master/config/:/etc/mfs/
-      - ./volumes/master/metadata/:/var/lib/mfs/
+      - ./volumes/master/config/:/etc/lizardfs/
+      - ./volumes/master/metadata/:/var/lib/lizardfs/
       - ./volumes/master/log/:/var/log/
 
   shadowmaster:
@@ -139,8 +139,8 @@ services:
     #   - "9422:9422"
     volumes:
       - ./volumes/config/:/config:ro
-      - ./volumes/chunkserver1/config/:/etc/mfs/
-      - ./volumes/chunkserver1/metadata/:/var/lib/mfs/
+      - ./volumes/chunkserver1/config/:/etc/lizardfs/
+      - ./volumes/chunkserver1/metadata/:/var/lib/lizardfs/
       - ./volumes/chunkserver1/log/:/var/log/
       - ./volumes/chunkserver1/hdd/:/hdd/
 
@@ -153,8 +153,8 @@ services:
     #   - "9422:9422"
     volumes:
       - ./volumes/config/:/config:ro
-      - ./volumes/chunkserver2/config/:/etc/mfs/
-      - ./volumes/chunkserver2/metadata/:/var/lib/mfs/
+      - ./volumes/chunkserver2/config/:/etc/lizardfs/
+      - ./volumes/chunkserver2/metadata/:/var/lib/lizardfs/
       - ./volumes/chunkserver2/log/:/var/log/
       - ./volumes/chunkserver2/hdd/:/hdd/
 
@@ -167,8 +167,8 @@ services:
     #   - "9422:9422"
     volumes:
       - ./volumes/config/:/config:ro
-      - ./volumes/chunkserver3/config/:/etc/mfs/
-      - ./volumes/chunkserver3/metadata/:/var/lib/mfs/
+      - ./volumes/chunkserver3/config/:/etc/lizardfs/
+      - ./volumes/chunkserver3/metadata/:/var/lib/lizardfs/
       - ./volumes/chunkserver3/log/:/var/log/
       - ./volumes/chunkserver3/hdd/:/hdd/
 
@@ -181,8 +181,8 @@ services:
     #   - "9422:9422"
     volumes:
       - ./volumes/config/:/config:ro
-      - ./volumes/chunkserver4/config/:/etc/mfs/
-      - ./volumes/chunkserver4/metadata/:/var/lib/mfs/
+      - ./volumes/chunkserver4/config/:/etc/lizardfs/
+      - ./volumes/chunkserver4/metadata/:/var/lib/lizardfs/
       - ./volumes/chunkserver4/log/:/var/log/
       - ./volumes/chunkserver4/hdd/:/hdd/
 
@@ -195,8 +195,8 @@ services:
     #   - "9422:9422"
     volumes:
       - ./volumes/config/:/config:ro
-      - ./volumes/chunkserver5/config/:/etc/mfs/
-      - ./volumes/chunkserver5/metadata/:/var/lib/mfs/
+      - ./volumes/chunkserver5/config/:/etc/lizardfs/
+      - ./volumes/chunkserver5/metadata/:/var/lib/lizardfs/
       - ./volumes/chunkserver5/log/:/var/log/
       - ./volumes/chunkserver5/hdd/:/hdd/
 

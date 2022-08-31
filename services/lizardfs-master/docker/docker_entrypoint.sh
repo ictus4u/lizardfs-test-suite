@@ -1,6 +1,6 @@
 #!/usr/bin/env sh
 set -eux
-LIZARDFS_CONFIG_SOURCE=${LIZARDFS_CONFIG_SOURCE:-/usr/share/doc/mfs-master/examples}
+LIZARDFS_CONFIG_SOURCE=${LIZARDFS_CONFIG_SOURCE:-/usr/share/doc/lizardfs-master/examples}
 
 load_config() {
   src_config=${1:-}
@@ -17,7 +17,7 @@ load_config() {
 }
 
 fix_metadata() {
-	local metadata_dir="/var/lib/mfs"
+	local metadata_dir="/var/lib/lizardfs"
 	if [ ! -f "${metadata_dir}/metadata.mfs" ]; then
 		cp /tmp/metadata.mfs.empty ${metadata_dir}/metadata.mfs
 	fi
@@ -27,8 +27,8 @@ fix_metadata() {
   rm ${metadata_dir}/metadata.mfs.lock || true
 }
 
-config_dir="/etc/mfs"
-lizardfs_user=mfs
+config_dir="/etc/lizardfs"
+lizardfs_user=lizardfs
 load_config mfsmaster.cfg       ${config_dir}/mfsmaster.cfg
 load_config mfsexports.cfg      ${config_dir}/mfsexports.cfg
 load_config mfstopology.cfg     ${config_dir}/mfstopology.cfg

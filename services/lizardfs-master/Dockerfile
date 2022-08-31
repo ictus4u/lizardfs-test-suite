@@ -5,12 +5,12 @@ FROM ${LIZARD_BASE_REPOSITORY}
 RUN set -ex ; \
     apt-get update; \
     apt-get install -y --no-install-recommends \
-    lizardfs-common=3.12.0 \
-    lizardfs-master=3.12.0 ; \
+    lizardfs-common \
+    lizardfs-master ; \
     rm -rf /var/lib/apt/lists/* ;
 
-RUN cp /etc/mfs/*.cfg.dist /tmp/ ; \
-    cp /var/lib/mfs/metadata.mfs.empty /tmp/ ;
+RUN cp /etc/lizardfs/*.cfg.dist /tmp/ ; \
+    cp /var/lib/lizardfs/metadata.mfs.empty /tmp/ ;
 
 EXPOSE 9419 9420 9424 9421
 

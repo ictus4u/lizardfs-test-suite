@@ -1,6 +1,6 @@
 #!/usr/bin/env sh
 set -eux
-LIZARDFS_CONFIG_SOURCE=${LIZARDFS_CONFIG_SOURCE:-/usr/share/doc/mfs-chunkserver/examples}
+LIZARDFS_CONFIG_SOURCE=${LIZARDFS_CONFIG_SOURCE:-/usr/share/doc/lizardfs-chunkserver/examples}
 
 
 load_config() {
@@ -17,8 +17,8 @@ load_config() {
   fi
 }
 
-config_dir=/etc/mfs
-lizardfs_user=mfs
+config_dir=/etc/lizardfs
+lizardfs_user=lizardfs
 
 load_config mfschunkserver.cfg    ${config_dir}/mfschunkserver.cfg
 load_config mfshdd.cfg            ${config_dir}/mfshdd.cfg
@@ -38,6 +38,6 @@ fi
 
 chmod -R ug+rwX,o=rX ${config_dir}
 
-data_path="/var/lib/mfs/"
+data_path="/var/lib/lizardfs/"
 chown ${lizardfs_user}:${lizardfs_user} -R ${data_path}
 exec "$@"

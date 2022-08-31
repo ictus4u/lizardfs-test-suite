@@ -10,8 +10,8 @@ ARG ENVIRONMENT_FILE=/etc/default/lizardfs-cgiserv
 RUN set -ex ; \
     apt-get update; \
     apt-get install -y \
-    lizardfs-cgi=3.12.0 \
-    lizardfs-cgiserv=3.12.0 ; \
+    lizardfs-cgi \
+    lizardfs-cgiserv ; \
     rm -rf /var/lib/apt/lists/*
 
 ENV BIND_HOST=${BIND_HOST}

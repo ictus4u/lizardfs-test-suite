@@ -7,9 +7,8 @@ RUN set -ex ; \
     apt-get install -y --no-install-recommends \
     bash-completion \
     fuse3>=3.2.3 \
-    lizardfs-adm=3.12.0 \
-    lizardfs-client=3.12.0 \
-    lizardfs-client3=3.13.0; \
+    lizardfs-adm \
+    lizardfs-client3 ; \
     rm -rf /var/lib/apt/lists/*
 
 RUN mkdir -p /mnt/lizardfs
@@ -19,4 +18,4 @@ VOLUME [ "/config" ]
 COPY ./docker/docker_entrypoint.sh /
 ENTRYPOINT [ "/usr/bin/tini", "--", "/docker_entrypoint.sh" ]
 
-CMD ["mfsmount", "-f", "/mnt/lizardfs"]
+CMD ["mfsmount3", "-f", "/mnt/lizardfs"]
